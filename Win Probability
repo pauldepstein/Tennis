@@ -1,0 +1,28 @@
+# In ordinary tennis, a minimum of 4 points is needed to win a game, but this
+# is generalized.  Recursion is used.
+# xCurrentScore is the current score for player x.
+
+# First calculate the probability of x winning from deuce.
+# This is done by hand. 
+# The possibilities are: x wins the next two points; x loses the next two points;
+# x wins 1 and loses 1 from the next two points.
+# This gives us d = x ^ 2 + 2 * x * (1 - x) * d
+# d = x ^ 2 / ( 1- 2 * x * (1 - x))
+
+# Now calculate the probability of winning at advantage.
+# This is x + d * (1-x)
+# The probablity of winning from losing by advantage is d * x 
+
+
+def prob(xCurrentScore, yCurrentScore, x, winBy2, minPointsPerGame = 4):
+    winFromDeuce =  x * x/(1 - 2 * x * ( 1- x)) if winBy2 else x
+    winFromAdBehind = winFromDeuce * x if winBy2 else 0
+    winFromAdAhead = 
+    
+    if not winBy2:
+        if xCurrentScore == minPointsPerGame:
+            return 1
+        if yCurrentScore == minPointsPerGame:
+            return 1
+        
+        
