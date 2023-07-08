@@ -1,3 +1,9 @@
+# Suppose the probability of a player winning a tennis point is always x
+# The aim of this function is to calculate the probability of that player winning
+# a tennis game. 
+# This probability is calculated under two conventions -- the standard convention
+# that players must win by two points (the advantage rule) and the no-ad rule
+# that players can win by just a single point.
 # In ordinary tennis, a minimum of 4 points is needed to win a game, but this
 # is generalized.  Recursion is used.
 # xCurrentScore is the current score for player x.
@@ -17,12 +23,36 @@
 def prob(xCurrentScore, yCurrentScore, x, winBy2, minPointsPerGame = 4):
     winFromDeuce =  x * x/(1 - 2 * x * ( 1- x)) if winBy2 else x
     winFromAdBehind = winFromDeuce * x if winBy2 else 0
-    winFromAdAhead = 
+    winFromAdAhead = x + winFromDeuce * (1 -x) if winBy2 else 1
     
-    if not winBy2:
-        if xCurrentScore == minPointsPerGame:
+    if xCurrentScore == minPointsPerGame:
+        if not winBy2:
             return 1
-        if yCurrentScore == minPointsPerGame:
+        if xCurrentScore - yCurrentScore >=2:
             return 1
+        if xCurrentScore == yCurrentScore:
+            return winFromDeuce
+        return winFromAdAhead
         
+    if yCurrentScore == minPointsPerGame:
+        return 1 - prob(yCurrentScore, xCurrentScore, 1-x, winBy2, minPointsPerGame)
         
+    # Now just use the recursion step
+    probIfxWinsNext = prob(xCurrentScore + 1, yCurrentScore, x, winBy2, minPointsPerGame)
+    
+    probIfyWinsNext = prob(xCurrentScore, yCurrentScore + 1, x, winBy2, minPointsPerGame)
+    
+    return round(x * probIfxWinsNext + (1-x) * probIfyWinsNext, 6)
+
+epsilon = 1e-8            
+for i in range(1001):
+    x = i/1000
+    print("The probability of x winning is", x)
+    probWinningStandard = prob(0,0, x, True)
+    probWinningNoAd = prob(0,0, x, False)
+    if probWinningStandard - probWinningNoAd > epsilon:
+        print("x wins more under standard rules")
+    elif probWinningNoAd - probWinningStandard > epsilon:
+        print("x wins more under no ad rules")
+    else:
+        print("x wins the same either way")
